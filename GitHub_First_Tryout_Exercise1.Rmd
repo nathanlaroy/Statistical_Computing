@@ -20,7 +20,7 @@ This famous ([Fisher's](https://en.wikipedia.org/wiki/Ronald_Fisher) or [Anderso
 `iris`
 
 ## **Format**
-`iris` is a data frame with 150 cases (rows) and 5 variables (columns) named:
+`iris` is a data frame with 150 cases (rows) and five variables (columns) named:
 
 ```
   * Sepal.Length
