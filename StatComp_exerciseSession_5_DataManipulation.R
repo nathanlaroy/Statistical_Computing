@@ -45,5 +45,4 @@ system.time(df_tibble %>% count(lemma_low, name = "freq"))
 system.time(df_dt[, .N, lemma_low])
 
 # 5
-df_freq_order <- with(df_freq, order(Freq, decreasing = T))
-head(df_freq_order)
+df_freq_order <- with(df_freq, df_freq[order(Freq, decreasing = T),])
