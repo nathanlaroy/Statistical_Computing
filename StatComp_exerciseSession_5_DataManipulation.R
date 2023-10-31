@@ -33,7 +33,8 @@ system.time(within(df, {token_low <- tolower(df$token)
                         lemma_low <- tolower(df$lemma)}))
 system.time(df_tibble %>% mutate(token_low = tolower(token), 
                                  lemma_low = tolower(lemma)))
-system.time(df_dt[, c("token_low", "lemma_low") := .(tolower(token), tolower(lemma))])
+system.time(df_dt[, c("token_low", "lemma_low") := .(tolower(token), 
+                                                     tolower(lemma))])
 
 # 4
 df_freq <- data.frame(with(df, table(lemma_low)))
@@ -46,3 +47,8 @@ system.time(df_dt[, .N, lemma_low])
 
 # 5
 df_freq_order <- with(df_freq, df_freq[order(Freq, decreasing = T),])
+df_tibble_order <- df_tibble %>% count(lemma_low, name = "freq", sort = T)
+dt_order <- dt_freq[order(N, decreasing = T)]
+
+# 6
+
