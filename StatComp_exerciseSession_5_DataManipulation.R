@@ -51,4 +51,39 @@ df_tibble_order <- df_tibble %>% count(lemma_low, name = "freq", sort = T)
 dt_order <- dt_freq[order(N, decreasing = T)]
 
 # 6
+upos_type <- data.frame(upos = c("NOUN", "PROPN", "ADJ", "VERB", "ADV", "NUM",
+                                 "DET", "PRON", "ADP", "CCONJ", "SCONJ", "PART",
+                                 "AUX", "INTJ"),
+                        type = c(rep("Content", 6), rep("Function", 8)))
 
+df$order <- data.frame(order = 1:length(df[, 1]))
+df_merged_unsorted <- merge(x = upos_type, y = df, by.x = "upos", by.y = "upos", all = T)
+df_merged <- df_merged_unsorted[order(df_merged_unsorted$order[,1]),]
+df_merged <- subset(df_merged, select = -c(order))
+
+df_tibble_merged <- full_join(x = df_tibble, y = tibble(upos_type),
+                              by = "upos")
+
+df_dt_order <- copy(df_dt[, order := c(1:length(df_dt$doc_id))])
+df_dt_merged <- merge(df_dt_order, data.table(upos_type), by = "upos", all = T)
+df_dt_merged <- subset(df_dt_merged[order(order),], select = -c(order))
+
+# 7
+total_n <- sum(df_freq_order$Freq)
+
+perc <- prop.table(df_freq_order$Freq)*100
+df_perc <- cbind(df_freq_order, perc)
+system.time(reshape(df_perc, varying = list(c("Freq", "perc")),
+             v.names = "Value", timevar = "Count", idvar = "lemma_low",
+             times = c("Freq", "Perc"), direction = "long"))
+
+
+tibble_perc <- df_tibble_order %>% add_column(perc = perc)
+system.time(tibble_perc_long <- tibble_perc %>% pivot_longer(cols = c("freq","perc"),
+                                                names_to = "Kind",
+                                                values_to = "Count"))
+
+dt_order[, Perc := perc]
+system.time(reshape(dt_order, varying = list(c("N", "Perc")),
+             v.names = "Value", timevar = "Count", idvar = "lemma_low",
+             times = c("Freq", "Perc"), direction = "long"))
